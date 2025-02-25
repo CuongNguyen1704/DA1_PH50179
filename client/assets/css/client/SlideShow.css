@@ -1,0 +1,106 @@
+.slideshow-container {
+    max-width: 1200px;
+    height: 375px ;
+    margin: auto;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.mySlides img {
+    /* border-radius: 15px; */
+    width: 1200px;
+    height: 375px;
+    object-fit: cover;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-image: linear-gradient(to bottom right, #44494e, #e3e3e3);
+    cursor: pointer;
+    z-index: 2;
+    text-decoration: none;
+}
+
+.prev {
+    left: 20px;
+}
+
+.next {
+    right: 20px;
+}
+
+.prev i, .next i {
+    font-size: 32px;
+    color: white;
+}
+
+/* Animation */
+@keyframes fade {
+    from {opacity: .3}
+    to {opacity: 1}
+} 
+/* Thêm vào file SlideShow.css */
+.fade {
+    animation: fade 3.1s ease-in-out;
+}
+
+@media (max-width: 1200px) {
+    .slideshow-container {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    .mySlides img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .slideshow-container {
+        max-height: 300px;
+        margin-bottom: 15px;
+    }
+    
+    .prev, .next {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .prev i, .next i {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .slideshow-container {
+        max-height: 200px;
+        margin-bottom: 10px;
+    }
+    
+    .prev, .next {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .prev i, .next i {
+        font-size: 20px;
+    }
+    
+    .prev {
+        left: 10px;
+    }
+    
+    .next {
+        right: 10px;
+    }
+}
