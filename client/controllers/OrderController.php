@@ -17,13 +17,13 @@ class OrderController
                 $ram_id = $_POST['ram_id'];
 
                 // Lấy thông tin sản phẩm và RAM
-                $sql = "SELECT sp.*, hasp.hinh_sp, r.dung_luong, r.gia_tang 
-                       FROM san_pham sp
-                       JOIN hinh_anh_san_pham hasp ON sp.san_pham_id = hasp.san_pham_id
-                       LEFT JOIN ram r ON r.ram_id = ?
-                       WHERE sp.san_pham_id = ?
-                       GROUP BY sp.san_pham_id
-                       LIMIT 1";
+                $sql = "SELECT sp.*, MAX(hasp.hinh_sp) AS hinh_sp, MAX(r.dung_luong) AS dung_luong, MAX(r.gia_tang) AS gia_tang
+                FROM san_pham sp
+                JOIN hinh_anh_san_pham hasp ON sp.san_pham_id = hasp.san_pham_id
+                LEFT JOIN ram r ON r.ram_id = ?
+                WHERE sp.san_pham_id = ?
+                GROUP BY sp.san_pham_id
+                LIMIT 1";
                 $product = pdo_query_one($sql, $ram_id, $san_pham_id);
 
                 if ($product) {
@@ -88,7 +88,7 @@ class OrderController
             foreach ($checkout_data['cart_items'] as $item) {
                 if (!checkProductStock($item['san_pham_id'], $item['so_luong'])) {
                     $_SESSION['error'] = "Sản phẩm '{$item['ten_san_pham']}' không đủ số lượng tồn kho.";
-                    header('Location: index.php?act=product-detail&id=' . $item['san_pham_id'] );
+                    header('Location: index.php?act=product-detail&id=' . $item['san_pham_id']);
                     exit;
                 }
             }
@@ -162,15 +162,15 @@ class OrderController
             $pdo = pdo_get_connection();
 
             $sql = "SELECT dh.*, ct.san_pham_id, ct.so_luong, ct.gia, ct.ram_id, 
-                    sp.ten_san_pham, hasp.hinh_sp, r.dung_luong, r.gia_tang     
-                    FROM don_hang dh 
-                    JOIN chi_tiet_don_hang ct ON dh.don_hang_id = ct.don_hang_id 
-                    JOIN san_pham sp ON ct.san_pham_id = sp.san_pham_id 
-                    LEFT JOIN hinh_anh_san_pham hasp ON sp.san_pham_id = hasp.san_pham_id
-                    LEFT JOIN ram r ON ct.ram_id = r.ram_id 
-                    WHERE dh.tai_khoan_id = ? 
-                    GROUP BY ct.chi_tiet_don_hang_id
-                    ORDER BY dh.don_hang_id DESC";
+       sp.ten_san_pham, MAX(hasp.hinh_sp) AS hinh_sp, MAX(r.dung_luong) AS dung_luong, MAX(r.gia_tang) AS gia_tang     
+        FROM don_hang dh 
+        JOIN chi_tiet_don_hang ct ON dh.don_hang_id = ct.don_hang_id 
+        JOIN san_pham sp ON ct.san_pham_id = sp.san_pham_id 
+        LEFT JOIN hinh_anh_san_pham hasp ON sp.san_pham_id = hasp.san_pham_id
+        LEFT JOIN ram r ON ct.ram_id = r.ram_id 
+        WHERE dh.tai_khoan_id = ? 
+        GROUP BY ct.chi_tiet_don_hang_id
+        ORDER BY dh.don_hang_id DESC;";
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$tai_khoan_id]);
@@ -228,7 +228,7 @@ class OrderController
                 exit;
             }
 
-            $order_details = getOrderDetails($order_id); 
+            $order_details = getOrderDetails($order_id);
             foreach ($order_details as $detail) {
                 increaseProductStock($detail['san_pham_id'], $detail['so_luong']); // Restore stock
             }

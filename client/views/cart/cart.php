@@ -91,25 +91,30 @@
 
                 <?php
                 // Kiểm tra đăng nhập
+                session_start();
                 if (!isset($_SESSION['email'])) {
                     echo '<div class="alert alert-warning">Vui lòng đăng nhập để xem giỏ hàng</div>';
                     exit;
                 }
 
                 try {
-                    $tai_khoan_id = $_SESSION['email']['tai_khoan_id'];
+                    if (is_array($_SESSION['email']) && isset($_SESSION['email']['tai_khoan_id'])) {
+                        $tai_khoan_id = $_SESSION['email']['tai_khoan_id'];
+                    } else {
+                        echo '<div class="alert alert-danger">Lỗi xác thực tài khoản</div>';
+                        exit;
+                    }
 
                     // Truy vấn lấy thông tin giỏ hàng
-                    $sql = "SELECT g.*, sp.ten_san_pham, sp.gia, hasp.hinh_sp as hinh_sp, 
+                    $sql = "SELECT DISTINCT g.*, sp.ten_san_pham, sp.gia, hasp.hinh_sp, 
                             r.dung_luong, r.gia_tang,
                             (sp.gia + r.gia_tang) * g.so_luong as thanh_tien
-                            FROM gio_hang g
-                            JOIN san_pham sp ON g.san_pham_id = sp.san_pham_id
-                            JOIN hinh_anh_san_pham hasp ON sp.san_pham_id = hasp.san_pham_id
-                            JOIN ram r ON g.ram_id = r.ram_id
-                            WHERE g.tai_khoan_id = ?
-                            GROUP BY g.gio_hang_id
-                            ORDER BY g.gio_hang_id DESC";
+                        FROM gio_hang g
+                        JOIN san_pham sp ON g.san_pham_id = sp.san_pham_id
+                        JOIN hinh_anh_san_pham hasp ON sp.san_pham_id = hasp.san_pham_id
+                        JOIN ram r ON g.ram_id = r.ram_id
+                        WHERE g.tai_khoan_id = ?
+                        ORDER BY g.gio_hang_id DESC";
 
                     $cartItems = pdo_query($sql, $tai_khoan_id);
 

@@ -57,7 +57,6 @@ class CartController {
             header('Location: ?act=cart');
             exit;
         }
-
         try {
             $sql = "DELETE FROM gio_hang 
                     WHERE tai_khoan_id = ? AND san_pham_id = ? AND ram_id = ?";
