@@ -91,7 +91,7 @@
 
                 <?php
                 // Kiểm tra đăng nhập
-                session_start();
+                
                 if (!isset($_SESSION['email'])) {
                     echo '<div class="alert alert-warning">Vui lòng đăng nhập để xem giỏ hàng</div>';
                     exit;
